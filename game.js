@@ -1,10 +1,10 @@
-// Fast Forward Tech - Race Against BOAT (Improved Version)
-// Using Phaser.js framework
+// Fast Forward Tech - Race Against BOAT (Enhanced Version)
+// Using Phaser.js framework with improved UI, movement, and visuals
 
 const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 400,
+    width: 1000,
+    height: 500,
     physics: {
         default: 'arcade',
         arcade: {
@@ -24,37 +24,37 @@ let vismac, boat, cursors, speedBoosts, timerText;
 let finishLine, gameTimer, startTime;
 
 function preload() {
-    this.load.image('background', 'background.png'); // Water/street background
-    this.load.image('vismac', 'vismac.png'); // VISMAC racer
-    this.load.image('boat', 'boat.png'); // BOAT racer (Paper boat)
-    this.load.image('boost', 'boost.png'); // Speed boost icon
+    this.load.image('background', 'water_track.png'); // Background image
+    this.load.image('vismac', 'vismac_boat.png'); // VISMAC Boat icon
+    this.load.image('boat', 'paper_boat.png'); // BOAT icon
+    this.load.image('boost', 'boost.png'); // Speed boost power-up
 }
 
 function create() {
-    this.add.image(400, 200, 'background').setScale(1);
+    this.add.image(500, 250, 'background').setScale(1.2);
     
-    vismac = this.physics.add.sprite(100, 150, 'vismac');
-    boat = this.physics.add.sprite(100, 250, 'boat');
+    vismac = this.physics.add.sprite(100, 200, 'vismac').setScale(0.8);
+    boat = this.physics.add.sprite(100, 300, 'boat').setScale(0.8);
     
     vismac.setCollideWorldBounds(true);
     boat.setCollideWorldBounds(true);
     
-    boat.setVelocityX(120); // BOAT starts slower
+    boat.setVelocityX(80); // BOAT starts slow but speeds up over time
     
     cursors = this.input.keyboard.createCursorKeys();
     
     speedBoosts = this.physics.add.group({
         key: 'boost',
-        repeat: 4,
-        setXY: { x: 250, y: 150, stepX: 150 }
+        repeat: 6,
+        setXY: { x: 300, y: 250, stepX: 200 }
     });
     
     this.physics.add.overlap(vismac, speedBoosts, collectBoost, null, this);
     
-    finishLine = this.add.rectangle(750, 200, 20, 400, 0xff0000);
+    finishLine = this.add.rectangle(900, 250, 20, 500, 0xff0000);
     this.physics.add.existing(finishLine, true);
     
-    timerText = this.add.text(10, 10, 'Time: 60s', { fontSize: '20px', fill: '#fff' });
+    timerText = this.add.text(10, 10, 'Time: 60s', { fontSize: '24px', fill: '#fff' });
     
     startTime = this.time.now;
     gameTimer = this.time.addEvent({ delay: 60000, callback: endGame, callbackScope: this });
@@ -65,22 +65,22 @@ function update() {
     timerText.setText(`Time: ${60 - elapsedTime}s`);
     
     if (cursors.right.isDown) {
-        vismac.setVelocityX(180);
+        vismac.setVelocityX(160);
     } else {
-        vismac.setVelocityX(100);
+        vismac.setVelocityX(80);
     }
     
-    boat.setVelocityX(100 + elapsedTime * 2); // BOAT gradually speeds up
+    boat.setVelocityX(60 + elapsedTime * 3); // BOAT gradually speeds up
 }
 
 function collectBoost(player, boost) {
     boost.destroy();
-    player.setVelocityX(player.body.velocity.x + 50);
+    player.setVelocityX(player.body.velocity.x + 70);
 }
 
 function endGame() {
     if (vismac.x > boat.x) {
-        alert("🎉 VISMAC Wins! Collect Your Prize at the Booth!");
+        alert("🎉 VISMAC Wins! Claim Your Prize!");
     } else {
         alert("BOAT won... Try Again! VISMAC Never Gives Up!");
     }
